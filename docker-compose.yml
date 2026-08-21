@@ -30,8 +30,9 @@ services:
       - red-ejemplo
 
   backend:
-    build: .
+    image: anderson2103/mi-api:latest
     container_name: backend-082
+    restart: always
     depends_on:
       db:
         condition: service_healthy
@@ -56,6 +57,7 @@ services:
 
 volumes:
   mysql-data:
+
   uptime-kuma-data:
     name: uptime-kuma-data
 
