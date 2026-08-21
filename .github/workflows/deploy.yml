@@ -11,36 +11,33 @@ jobs:
 
     steps:
       - name: Descargar código
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-    networks:
-      - red-ejemplo
-
-  db:
-    image: mysql:8.0
-    container_name: servidor-bd-082
-    environment:
-      MYSQL_ROO
       - name: Iniciar sesión en Docker Hub
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERS_USER_NAME }}
           password: ${{ secrets.DOCKERS_PASSWORD }}
 
       - name: Construir y subir imagen
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v6
         with:
           context: .
           push: true
           tags: anderson2103/mi-api:latest
 
-  -name: Deplegar en el servidor cloud
-  uses: appleboy/ssh-action@1.0.3
-  witch: 
-  host: ${{ secrets.SERVER_HOST}} 
-  username: ${{secrets.SERVER_USER}}
-key: $ {{ secrets.SERVER_SSH_KEY}}
-script: |
-    cd /home/anderson/Documentos/proyecto_copia
-    docker compose pull 
-    docker compose up -d
+  deploy:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Desplegar en el servidor cloud
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script: |
+            cd /home/ubuntu/proyecto_copia
+            docker compose pull
+            docker compose up -d
