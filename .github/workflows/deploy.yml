@@ -39,5 +39,5 @@ jobs:
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
             cd ~/docker-flask
-            docker compose pull
+            docker compose pull backend
             docker compose up -d
