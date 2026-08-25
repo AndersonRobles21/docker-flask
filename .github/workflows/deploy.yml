@@ -57,7 +57,8 @@ jobs:
 
       - name: Diagnosticar conexion SSH
         run: |
-          nc -vz -w 10 3.143.210.169 22
+          echo "Probando SERVER_HOST en puerto 22..."
+          nc -vz -w 10 "${{ secrets.SERVER_HOST }}" 22
 
       - name: Escanear imagen con Trivy
         uses: aquasecurity/trivy-action@master
@@ -77,11 +78,14 @@ jobs:
           tags: anderson2103/mi-api:latest
 
       - name: Desplegar en el servidor cloud
-        uses: appleboy/ssh-action@v1.0.3
+        uses: appleboy/ssh-action@v1.2.2
         with:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
+          port: 22
+          timeout: 30s
+          command_timeout: 10m
           script: |
             cd ~/docker-flask
             docker compose pull backend
