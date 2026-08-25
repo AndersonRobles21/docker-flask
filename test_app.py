@@ -1,4 +1,9 @@
-def test_ejemplo_basico():
-    resultado = 1 + 1
-    if resultado != 2:
-        raise Exception("La suma básica es incorrecta")
+from sample_app import sample
+
+
+def test_ruta_principal():
+    cliente = sample.test_client()
+
+    respuesta = cliente.get("/")
+
+    assert respuesta.status_code == 200

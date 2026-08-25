@@ -4,7 +4,7 @@ sample = Flask(__name__)
 
 @sample.route("/")
 def home():
-    return render_template("index.html", request=request)
+    return "Error intencional", 500
 
 if __name__ == "__main__":
-    sample.run(host="0.0.0.0", port=5050)  # nosec B104
+    sample.run(host="0.0.0.0", port=5050, debug=True)
