@@ -6,7 +6,6 @@ on:
       - main
 
 jobs:
-
   test:
     runs-on: ubuntu-latest
 
@@ -24,6 +23,11 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install pytest
+          pip install bandit
+
+      - name: Escanear seguridad
+        run: |
+          bandit -r . --exclude ./.venv,./tempdir
 
       - name: Ejecutar pruebas
         run: |
@@ -43,7 +47,24 @@ jobs:
           username: ${{ secrets.DOCKERS_USER_NAME }}
           password: ${{ secrets.DOCKERS_PASSWORD }}
 
-      - name: Construir y subir imagen
+      - name: Construir imagen
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          load: true
+          tags: anderson2103/mi-api:latest
+
+      - name: Escanear imagen con Trivy
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'anderson2103/mi-api:latest'
+          format: 'table'
+          exit-code: '1'
+          ignore-unfixed: true
+          vuln-type: 'os,library'
+          severity: 'CRITICAL,HIGH'
+
+      - name: Publicar imagen en Docker Hub
         uses: docker/build-push-action@v6
         with:
           context: .
@@ -59,4 +80,4 @@ jobs:
           script: |
             cd ~/docker-flask
             docker compose pull backend
-            docker compose up -d
+            docker compose up -d backend
