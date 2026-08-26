@@ -1,11 +1,14 @@
-FROM python:3.8-slim-buster
+FROM python:3.14-slim
 
 WORKDIR /home/myapp
 
 COPY requirements.txt .
 
-RUN pip install --no-cache-dir --upgrade pip setuptools \
-    && pip install --no-cache-dir -r requirements.txt
+RUN apt-get update \
+    && apt-get upgrade -y \
+    && rm -rf /var/lib/apt/lists/* \
+    && python -m pip install --no-cache-dir --upgrade pip setuptools \
+    && python -m pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 

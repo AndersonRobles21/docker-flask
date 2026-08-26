@@ -4,7 +4,7 @@ sample = Flask(__name__)
 
 @sample.route("/")
 def home():
-    return "Error intencional", 500
+    return "Aplicación funcionando", 200
 
 if __name__ == "__main__":
-    sample.run(host="0.0.0.0", port=5050, debug=True)
+    sample.run(host="0.0.0.0", port=5050, debug=False)
